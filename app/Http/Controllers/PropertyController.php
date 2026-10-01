@@ -36,9 +36,16 @@ class PropertyController extends Controller
 
     public function store(PropertyRequest $request): RedirectResponse
     {
+        $data = $request->validatedProperty();
+        $slug = Str::slug($data['title'] . '-' . $data['property_type_id']);
+
+        if (Property::where('slug', $slug)->exists()) {
+            return Redirect::back()->withErrors(['slug' => 'Ya existe una propiedad con este título y tipo. Por favor, modifica alguno de estos campos.'])->withInput();
+        }
+
         $property = Property::create(array_merge(
-            $request->validatedProperty(),
-            ['slug' => Str::slug($request->input('title') . '-' . $request->input('type') . '-' . $request->input('currency'))]
+            $data,
+            ['slug' => $slug]
         ));
 
         foreach ($request->validatedOperations() as $operationData) {
@@ -90,9 +97,16 @@ class PropertyController extends Controller
 
     public function update(PropertyRequest $request, Property $property): RedirectResponse
     {
+        $data = $request->validatedProperty();
+        $slug = Str::slug($data['title'] . '-' . $data['property_type_id']);
+
+        if (Property::where('slug', $slug)->where('id', '!=', $property->id)->exists()) {
+            return Redirect::back()->withErrors(['slug' => 'Ya existe una propiedad con este título y tipo. Por favor, modifica alguno de estos campos.'])->withInput();
+        }
+
         $property->update(array_merge(
-            $request->validatedProperty(),
-            ['slug' => Str::slug($request->input('title') . '-' . $request->input('type') . '-' . $request->input('currency'))]
+            $data,
+            ['slug' => $slug]
         ));
 
         $property->operations()->delete();

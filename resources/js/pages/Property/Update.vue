@@ -25,12 +25,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { Info, Pencil, Trash2 } from "@lucide/vue";
 
-import PropertyOperationsTable from "@/components/Property/PropertyOperationsTable.vue";
-import PropertyOperationsModal from "@/components/Property/PropertyOperationsModal.vue";
+import PropertyOperations from "@/components/Property/PropertyOperations.vue";
 import PropertyImageUpload from "@/components/Property/PropertyImageUpload.vue";
 
 import propertyRoutes from "@/routes/properties";
@@ -68,45 +67,11 @@ const props = defineProps<{
 }>();
 
 const saving = ref(false);
-const operationsDialogOpen = ref(false);
-const operationsDialogSaving = ref(false);
-const editingOperationIndex = ref<number | null>(null);
-
-const addOperation = () => {
-    editingOperationIndex.value = null;
-    operationsDialogOpen.value = true;
-};
-
-const editOperation = (index: number) => {
-    editingOperationIndex.value = index;
-    operationsDialogOpen.value = true;
-};
-
-const handleOperationSave = (operation: {
-    operation_type_id: number;
-    price: string | number;
-    currency: string;
-    status: string;
-}) => {
-    if (editingOperationIndex.value !== null) {
-        operations.value[editingOperationIndex.value] = {
-            ...operation,
-            price: String(operation.price),
-        };
-    } else {
-        operations.value.push({
-            ...operation,
-            price: String(operation.price),
-        });
-    }
-    operationsDialogOpen.value = false;
-    editingOperationIndex.value = null;
-};
 
 const schema = yup.object({
     title: yup.string().required().label("Título"),
     description: yup.string().required().label("Descripción"),
-    property_type_id: yup.string().nullable().label("Tipo de Propiedad"),
+    property_type_id: yup.string().required().label("Tipo de Propiedad"),
     operations: yup
         .array()
         .of(
@@ -123,7 +88,7 @@ const schema = yup.object({
         .min(1)
         .required()
         .label("Operaciones"),
-    images: yup.array().of(yup.string()).nullable().label("Imágenes"),
+    images: yup.array().of(yup.string()).min(1).label("Imágenes"),
 });
 
 const { handleSubmit, defineField, errors, setErrors } = useForm({
@@ -156,10 +121,6 @@ const [description] = defineField("description");
 const [propertyTypeId] = defineField("property_type_id");
 const [operations] = defineField("operations");
 const [images] = defineField("images");
-
-const removeOperation = (index: number) => {
-    operations.value.splice(index, 1);
-};
 
 const submit = handleSubmit((values) => {
     saving.value = true;
@@ -206,10 +167,10 @@ const submit = handleSubmit((values) => {
                 class="flex h-full flex-col"
             >
                 <div class="grid grid-cols-1 gap-6">
+                    <Separator />
+
                     <div class="grid gap-4">
-                        <p class="text-sm font-medium text-muted-foreground">
-                            Información básica
-                        </p>
+                        <Label>Información básica</Label>
                         <div class="grid grid-cols-1 gap-4">
                             <div class="grid gap-2">
                                 <Label for="title">Título</Label>
@@ -245,68 +206,9 @@ const submit = handleSubmit((values) => {
                                     :message="errors.property_type_id"
                                 />
                             </div>
+                            <InputError :message="errors.slug" />
                         </div>
                     </div>
-
-                    <Separator />
-
-                    <div class="grid gap-4">
-                        <div class="flex items-center justify-between">
-                            <p
-                                class="text-sm font-medium text-muted-foreground"
-                            >
-                                Operaciones
-                            </p>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                class="cursor-pointer shadow-none"
-                                @click="addOperation"
-                            >
-                                Agregar operación
-                            </Button>
-                        </div>
-
-                        <Alert>
-                            <Info class="size-4" />
-                            <AlertTitle>Múltiples operaciones</AlertTitle>
-                            <AlertDescription>
-                                Una propiedad puede tener más de una operación,
-                                por ejemplo, se puede alquilar y vender al mismo
-                                tiempo.
-                            </AlertDescription>
-                        </Alert>
-
-                        <PropertyOperationsTable
-                            :operations="operations as any[]"
-                            :operation-types="props.operationTypes"
-                            :property-statuses="props.propertyStatuses"
-                            @edit="editOperation"
-                            @remove="removeOperation"
-                        />
-
-                        <InputError :message="errors.operations" />
-                    </div>
-
-                    <PropertyOperationsModal
-                        :open="operationsDialogOpen"
-                        :saving="operationsDialogSaving"
-                        :mode="
-                            editingOperationIndex !== null ? 'edit' : 'create'
-                        "
-                        :operation="
-                            editingOperationIndex !== null
-                                ? operations[editingOperationIndex]
-                                : undefined
-                        "
-                        :property-types="props.propertyTypes"
-                        :property-statuses="props.propertyStatuses"
-                        :currencies="props.currencies"
-                        :operation-types="props.operationTypes"
-                        @update:open="operationsDialogOpen = $event"
-                        @save="handleOperationSave"
-                    />
 
                     <Separator />
 
@@ -315,6 +217,18 @@ const submit = handleSubmit((values) => {
                         label="Imágenes"
                         :error="errors.images"
                     />
+
+                    <Separator />
+
+                    <PropertyOperations
+                        v-model:operations="operations"
+                        :operation-types="props.operationTypes"
+                        :property-statuses="props.propertyStatuses"
+                        :currencies="props.currencies"
+                        :saving="saving"
+                    />
+
+                    <InputError :message="errors.operations" />
                 </div>
             </form>
         </CardContent>
