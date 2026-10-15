@@ -69,9 +69,16 @@ class PropertyTypeController extends Controller
      */
     public function destroy(PropertyType $propertyType): RedirectResponse
     {
+        if ($propertyType->isInUse()) {
+            return redirect()
+                ->route('propertyTypes.index')
+                ->with('error', 'No se puede eliminar el tipo de propiedad porque está asignado a una o más propiedades.');
+        }
+
         $propertyType->delete();
 
         return redirect()
-            ->route('propertyTypes.index');
+            ->route('propertyTypes.index')
+            ->with('success', 'Tipo de propiedad eliminado correctamente.');
     }
 }

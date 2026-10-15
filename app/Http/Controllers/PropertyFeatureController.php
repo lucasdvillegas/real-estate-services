@@ -69,9 +69,16 @@ class PropertyFeatureController extends Controller
      */
     public function destroy(PropertyFeature $propertyFeature): RedirectResponse
     {
+        if ($propertyFeature->isInUse()) {
+            return redirect()
+                ->route('propertyFeatures.index')
+                ->with('error', 'No se puede eliminar la característica porque está asignada a una o más propiedades.');
+        }
+
         $propertyFeature->delete();
 
         return redirect()
-            ->route('propertyFeatures.index');
+            ->route('propertyFeatures.index')
+            ->with('success', 'Característica eliminada correctamente.');
     }
 }

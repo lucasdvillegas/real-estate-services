@@ -2,6 +2,7 @@
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { Pencil, Plus, Search } from "@lucide/vue";
 import { ref, watch } from "vue";
+import { toast } from "vue-sonner";
 
 import DataTablePagination from "@/components/DataTablePagination.vue";
 import DeleteActionButton from "@/components/DeleteActionButton.vue";
@@ -70,7 +71,20 @@ const applyFilters = () => {
 };
 
 const deleteItem = (id: number) => {
-    router.delete(propertyTypeRoutes.destroy(id));
+    router.delete(propertyTypeRoutes.destroy(id), {
+        onSuccess: (page) => {
+            const flash = page.props.flash as Record<string, string> | undefined;
+            if (flash?.success) {
+                toast.success(flash.success);
+            } else if (flash?.error) {
+                toast.error(flash.error);
+            }
+        },
+        onError: (errors) => {
+            const message = errors.error || errors.message || 'Error al eliminar';
+            toast.error(message);
+        },
+    });
 };
 </script>
 

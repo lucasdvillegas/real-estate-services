@@ -7,6 +7,9 @@ use App\Models\PropertyOperation;
 use App\Models\PropertyStatus;
 use App\Models\PropertyType;
 use App\Models\PropertyImage;
+use App\Models\Currency;
+use App\Models\OperationType;
+use App\Models\PropertyFeature;
 use App\Http\Requests\PropertyRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,9 +42,9 @@ class PropertyController extends Controller
         return Inertia::render('Property/Create', [
             'propertyTypes' => PropertyType::query()->orderBy('name')->get(['code', 'name']),
             'propertyStatuses' => PropertyStatus::query()->orderBy('name')->get(['code', 'name']),
-            'currencies' => \App\Models\Currency::query()->orderBy('code')->get(['code', 'name']),
-            'operationTypes' => \App\Models\OperationType::query()->orderBy('name')->get(['id', 'code', 'name']),
-            'propertyFeatures' => \App\Models\PropertyFeature::query()->orderBy('name')->get(['id', 'code', 'name']),
+            'currencies' => Currency::query()->orderBy('code')->get(['code', 'name']),
+            'operationTypes' => OperationType::query()->orderBy('name')->get(['id', 'code', 'name']),
+            'propertyFeatures' => PropertyFeature::query()->orderBy('name')->get(['id', 'code', 'name']),
         ]);
     }
 
@@ -51,7 +54,7 @@ class PropertyController extends Controller
         $slug = Str::slug($data['title'] . '-' . $data['property_type_id']);
 
         if (Property::where('slug', $slug)->exists()) {
-            return Redirect::back()->withErrors(['slug' => 'Ya existe una propiedad con este título y tipo. Por favor, modifica alguno de estos campos.'])->withInput();
+            return redirect()->back()->withErrors(['slug' => 'Ya existe una propiedad con este título y tipo. Por favor, modifica alguno de estos campos.'])->withInput();
         }
 
         $property = Property::create(array_merge(
@@ -110,9 +113,9 @@ class PropertyController extends Controller
             'property' => $property,
             'propertyTypes' => PropertyType::query()->orderBy('name')->get(['id', 'code', 'name']),
             'propertyStatuses' => PropertyStatus::query()->orderBy('name')->get(['code', 'name']),
-            'currencies' => \App\Models\Currency::query()->orderBy('code')->get(['code', 'name']),
-            'operationTypes' => \App\Models\OperationType::query()->orderBy('name')->get(['id', 'code', 'name']),
-            'propertyFeatures' => \App\Models\PropertyFeature::query()->orderBy('name')->get(['id', 'code', 'name']),
+            'currencies' => Currency::query()->orderBy('code')->get(['code', 'name']),
+            'operationTypes' => OperationType::query()->orderBy('name')->get(['id', 'code', 'name']),
+            'propertyFeatures' => PropertyFeature::query()->orderBy('name')->get(['id', 'code', 'name']),
             'operations' => $operations->map(fn($operation) => [
                 'operation_type_id' => $operation->operation_type_id,
                 'price' => $operation->price,
@@ -131,7 +134,7 @@ class PropertyController extends Controller
         $slug = Str::slug($data['title'] . '-' . $data['property_type_id']);
 
         if (Property::where('slug', $slug)->where('id', '!=', $property->id)->exists()) {
-            return Redirect::back()->withErrors(['slug' => 'Ya existe una propiedad con este título y tipo. Por favor, modifica alguno de estos campos.'])->withInput();
+            return redirect()->back()->withErrors(['slug' => 'Ya existe una propiedad con este título y tipo. Por favor, modifica alguno de estos campos.'])->withInput();
         }
 
         $property->update(array_merge(

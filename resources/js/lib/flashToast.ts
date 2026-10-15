@@ -2,15 +2,20 @@ import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 import type { FlashToast } from '@/types/ui';
 
-export function initializeFlashToast(): void {
-    router.on('flash', (event) => {
-        const flash = (event as CustomEvent).detail?.flash;
-        const data = flash?.toast as FlashToast | undefined;
+const VALID_TOAST_TYPES: FlashToast['type'][] = ['success', 'error', 'info', 'warning'];
 
-        if (!data) {
+export function initializeFlashToast(): void {
+    router.on('finish', (event: CustomEvent) => {
+        const flash = event.detail?.page?.props?.flash as Record<string, string> | undefined;
+
+        if (!flash) {
             return;
         }
 
-        toast[data.type](data.message);
+        for (const [type, message] of Object.entries(flash)) {
+            if (VALID_TOAST_TYPES.includes(type as FlashToast['type'])) {
+                toast[type as FlashToast['type']](message);
+            }
+        }
     });
 }

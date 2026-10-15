@@ -22,4 +22,9 @@ class PropertyFeature extends Model
     {
         return $this->belongsToMany(Property::class, 'property_property_feature');
     }
+
+    public function isInUse(): bool
+    {
+        return $this->properties()->exists();
+    }
 }

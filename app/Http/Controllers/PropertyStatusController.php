@@ -69,9 +69,16 @@ class PropertyStatusController extends Controller
      */
     public function destroy(PropertyStatus $propertyStatus): RedirectResponse
     {
+        if ($propertyStatus->isInUse()) {
+            return redirect()
+                ->route('propertyStatuses.index')
+                ->with('error', 'No se puede eliminar el estado porque está asignado a una o más operaciones.');
+        }
+
         $propertyStatus->delete();
 
         return redirect()
-            ->route('propertyStatuses.index');
+            ->route('propertyStatuses.index')
+            ->with('success', 'Estado eliminado correctamente.');
     }
 }

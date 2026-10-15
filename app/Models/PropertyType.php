@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PropertyType extends Model
@@ -18,7 +19,7 @@ class PropertyType extends Model
         'code',
     ];
 
-    public function properties(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function properties(): HasMany
     {
         return $this->hasMany(Property::class);
     }
@@ -26,5 +27,10 @@ class PropertyType extends Model
     public function propertyFeatures(): BelongsToMany
     {
         return $this->belongsToMany(PropertyFeature::class, 'property_property_feature');
+    }
+
+    public function isInUse(): bool
+    {
+        return $this->properties()->exists();
     }
 }

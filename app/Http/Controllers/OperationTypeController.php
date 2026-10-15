@@ -69,9 +69,16 @@ class OperationTypeController extends Controller
      */
     public function destroy(OperationType $operationType): RedirectResponse
     {
+        if ($operationType->isInUse()) {
+            return redirect()
+                ->route('operationTypes.index')
+                ->with('error', 'No se puede eliminar el tipo de operación porque está asignado a una o más operaciones.');
+        }
+
         $operationType->delete();
 
         return redirect()
-            ->route('operationTypes.index');
+            ->route('operationTypes.index')
+            ->with('success', 'Tipo de operación eliminado correctamente.');
     }
 }

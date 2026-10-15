@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OperationType extends Model
@@ -18,8 +18,13 @@ class OperationType extends Model
         'code',
     ];
 
-    public function properties(): BelongsToMany
+    public function propertyOperations(): HasMany
     {
-        return $this->belongsToMany(Property::class, 'property_operations');
+        return $this->hasMany(PropertyOperation::class, 'operation_type_id');
+    }
+
+    public function isInUse(): bool
+    {
+        return $this->propertyOperations()->exists();
     }
 }

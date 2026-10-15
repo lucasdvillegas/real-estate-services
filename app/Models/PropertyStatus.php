@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PropertyStatus extends Model
@@ -16,4 +17,14 @@ class PropertyStatus extends Model
         'name',
         'code',
     ];
+
+    public function operations(): HasMany
+    {
+        return $this->hasMany(PropertyOperation::class, 'status', 'code');
+    }
+
+    public function isInUse(): bool
+    {
+        return $this->operations()->exists();
+    }
 }
