@@ -1,7 +1,5 @@
-export interface PropertyFeature {
+export interface PropertyFeatureType {
     id: number;
-    name: string;
     code: string;
-    created_at: string;
-    updated_at: string;
+    name: string;
 }

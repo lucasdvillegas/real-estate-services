@@ -43,8 +43,6 @@ const props = defineProps<{
     };
 }>();
 
-console.log(props.properties);
-
 const page = usePage();
 
 const search = ref<string>((page.props.filters as any)?.search ?? "");

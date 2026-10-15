@@ -25,6 +25,7 @@ export interface Property {
         };
     }>;
     images?: string;
+    features?: Array<{ id?: number; property_feature_id: number; quantity?: number }>;
     created_at: string;
     updated_at: string;
 }

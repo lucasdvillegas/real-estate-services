@@ -29,7 +29,7 @@ class Property extends Model
 
     public function propertyFeatures(): BelongsToMany
     {
-        return $this->belongsToMany(PropertyFeature::class, 'property_property_feature');
+        return $this->belongsToMany(PropertyFeature::class, 'property_property_feature')->withPivot('quantity');
     }
 
     public function images(): HasMany

@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Property;
 use App\Models\PropertyOperation;
+use App\Models\OperationType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,11 +20,11 @@ class PropertyOperationFactory extends Factory
     public function definition(): array
     {
         return [
-            'operation_type_id' => \App\Models\OperationType::inRandomOrder()->first()?->id ?? 1,
-            'price' => fake()->randomFloat(2, 1000, 500000),
-            'currency' => fake()->randomElement(['USD', 'ARS']),
-            'status' => fake()->randomElement(['disponible', 'reservado', 'vendido']),
-            'property_id' => \App\Models\Property::inRandomOrder()->first()?->id ?? 1,
+            'property_id' => Property::factory(),
+            'operation_type_id' => OperationType::factory(),
+            'price' => fake()->randomFloat(2, 50000, 500000),
+            'currency' => 'USD',
+            'status' => 'en_venta',
         ];
     }
 }

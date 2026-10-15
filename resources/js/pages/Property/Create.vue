@@ -30,6 +30,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 
 import PropertyOperations from "@/components/Property/PropertyOperations.vue";
+import PropertyFeatures from "@/components/Property/PropertyFeatures.vue";
 import PropertyImageUpload from "@/components/Property/PropertyImageUpload.vue";
 
 import propertyRoutes from "@/routes/properties";
@@ -54,6 +55,7 @@ const props = defineProps<{
     propertyStatuses: PropertyStatus[];
     currencies: Currency[];
     operationTypes: OperationType[];
+    propertyFeatures: Array<{ id: number; code: string; name: string }>;
 }>();
 
 const saving = ref(false);
@@ -97,6 +99,7 @@ const [description] = defineField("description");
 const [propertyTypeId] = defineField("property_type_id");
 const [operations] = defineField("operations");
 const [images] = defineField("images");
+const features = ref<Array<{ id?: number; property_feature_id: number; quantity?: number }>>([]);
 
 const submit = handleSubmit((values) => {
     saving.value = true;
@@ -106,6 +109,10 @@ const submit = handleSubmit((values) => {
         images: Array.isArray(values.images)
             ? values.images.join("\n")
             : values.images || "",
+        features: features.value.map((feature) => ({
+            property_feature_id: feature.property_feature_id,
+            quantity: feature.quantity ?? null,
+        })),
     };
 
     console.log(payload);
@@ -194,6 +201,14 @@ const submit = handleSubmit((values) => {
                         v-model="images"
                         label="Imágenes"
                         :error="errors.images"
+                    />
+
+                    <Separator />
+
+                    <PropertyFeatures
+                        v-model:features="(features as any[])"
+                        :property-features="props.propertyFeatures"
+                        :saving="saving"
                     />
 
                     <Separator />

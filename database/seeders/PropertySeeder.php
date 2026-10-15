@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Property;
 use App\Models\PropertyType;
 use App\Models\PropertyStatus;
+use App\Models\OperationType;
 
 class PropertySeeder extends Seeder
 {
@@ -15,13 +16,15 @@ class PropertySeeder extends Seeder
         $departamento = PropertyType::where('code', 'departamento')->first();
         $enVenta = PropertyStatus::where('code', 'en_venta')->first();
         $enAlquiler = PropertyStatus::where('code', 'en_alquiler')->first();
+        $ventaType = OperationType::where('code', 'venta')->first();
+        $alquilerType = OperationType::where('code', 'alquiler')->first();
 
         Property::factory()->create([
             'title' => 'Casa en venta - Barrio Norte',
             'description' => 'Amplia casa de 3 dormitorios con jardín y cochera.',
             'property_type_id' => $casa?->id,
         ])->operations()->create([
-            'type' => 'venta',
+            'operation_type_id' => $ventaType?->id,
             'price' => 150000,
             'currency' => 'USD',
             'status' => $enVenta?->code ?? 'en_venta',
@@ -32,7 +35,7 @@ class PropertySeeder extends Seeder
             'description' => 'Departamento luminoso de 2 ambientes con balcón.',
             'property_type_id' => $departamento?->id,
         ])->operations()->create([
-            'type' => 'alquiler',
+            'operation_type_id' => $alquilerType?->id,
             'price' => 1200,
             'currency' => 'USD',
             'status' => $enAlquiler?->code ?? 'en_alquiler',
@@ -43,7 +46,7 @@ class PropertySeeder extends Seeder
             'description' => 'PH moderno con amenities y terraza.',
             'property_type_id' => $casa?->id,
         ])->operations()->create([
-            'type' => 'venta',
+            'operation_type_id' => $ventaType?->id,
             'price' => 220000,
             'currency' => 'USD',
             'status' => $enVenta?->code ?? 'en_venta',

@@ -15,7 +15,6 @@ class PropertyOperation extends Model
 
     protected $fillable = [
         'operation_type_id',
-        'type',
         'price',
         'currency',
         'status',

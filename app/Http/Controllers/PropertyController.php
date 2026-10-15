@@ -19,8 +19,18 @@ class PropertyController extends Controller
 {
     public function index(): Response
     {
+        $properties = Property::query()
+            ->select('id', 'title', 'property_type_id')
+            ->with([
+                'propertyType', 
+                'operations.operationType', 
+                'operations.status'
+            ])
+            ->latest()
+            ->paginate(10);
+
         return Inertia::render('Property/Index', [
-            'properties' => Property::with(['propertyType', 'operations.operationType', 'operations.status'])->latest()->paginate(10),
+            'properties' => $properties,
         ]);
     }
 
@@ -31,6 +41,7 @@ class PropertyController extends Controller
             'propertyStatuses' => PropertyStatus::query()->orderBy('name')->get(['code', 'name']),
             'currencies' => \App\Models\Currency::query()->orderBy('code')->get(['code', 'name']),
             'operationTypes' => \App\Models\OperationType::query()->orderBy('name')->get(['id', 'code', 'name']),
+            'propertyFeatures' => \App\Models\PropertyFeature::query()->orderBy('name')->get(['id', 'code', 'name']),
         ]);
     }
 
@@ -69,6 +80,22 @@ class PropertyController extends Controller
             }
         }
 
+        if ($request->filled('features')) {
+            $featuresInput = (array) $request->input('features');
+            $featureData = [];
+            foreach ($featuresInput as $feature) {
+                if (!isset($feature['property_feature_id'])) {
+                    continue;
+                }
+                $featureId = (int) $feature['property_feature_id'];
+                $quantity = isset($feature['quantity']) && $feature['quantity'] !== '' && $feature['quantity'] !== null
+                    ? (int) $feature['quantity']
+                    : null;
+                $featureData[$featureId] = ['quantity' => $quantity];
+            }
+            $property->propertyFeatures()->sync($featureData);
+        }
+
         return redirect()->route('properties.index');
     }
 
@@ -76,6 +103,7 @@ class PropertyController extends Controller
     {
         $operations = $property->operations()->orderBy('id')->get(['operation_type_id', 'price', 'currency', 'status']);
         $images = $property->images()->orderBy('sort_order')->get(['path']);
+        $features = $property->propertyFeatures()->orderBy('id')->get(['property_features.id']);
         $property->load('propertyType');
 
         return Inertia::render('Property/Update', [
@@ -84,6 +112,7 @@ class PropertyController extends Controller
             'propertyStatuses' => PropertyStatus::query()->orderBy('name')->get(['code', 'name']),
             'currencies' => \App\Models\Currency::query()->orderBy('code')->get(['code', 'name']),
             'operationTypes' => \App\Models\OperationType::query()->orderBy('name')->get(['id', 'code', 'name']),
+            'propertyFeatures' => \App\Models\PropertyFeature::query()->orderBy('name')->get(['id', 'code', 'name']),
             'operations' => $operations->map(fn($operation) => [
                 'operation_type_id' => $operation->operation_type_id,
                 'price' => $operation->price,
@@ -91,6 +120,7 @@ class PropertyController extends Controller
                 'status' => $operation->status,
             ]),
             'images' => $images->map(fn($image) => $image->path)->implode("\n"),
+            'features' => $features->map(fn($feature) => ['id' => $feature->id, 'property_feature_id' => $feature->id, 'quantity' => $feature->pivot->quantity ?? null])->all(),
             'propertyTypeCode' => $property->propertyType?->code,
         ]);
     }
@@ -144,6 +174,22 @@ class PropertyController extends Controller
                     'sort_order' => $index + 1,
                 ]);
             }
+        }
+
+        if ($request->has('features')) {
+            $featuresInput = (array) $request->input('features');
+            $featureData = [];
+            foreach ($featuresInput as $feature) {
+                if (!isset($feature['property_feature_id'])) {
+                    continue;
+                }
+                $featureId = (int) $feature['property_feature_id'];
+                $quantity = isset($feature['quantity']) && $feature['quantity'] !== '' && $feature['quantity'] !== null
+                    ? (int) $feature['quantity']
+                    : null;
+                $featureData[$featureId] = ['quantity' => $quantity];
+            }
+            $property->propertyFeatures()->sync($featureData);
         }
 
         return redirect()->route('properties.index');
