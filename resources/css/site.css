@@ -22,7 +22,6 @@
     --color-line: oklch(0.87 0.008 85);
 
     --radius-4xl: 2rem;
-    --radius-5xl: 2.75rem;
 }
 
 @layer base {
@@ -74,14 +73,6 @@
     /* Outlined pill, used for tags. */
     .pill {
         @apply border-ink/15 text-ink inline-flex items-center rounded-full border px-3 py-1 text-xs;
-    }
-
-    .no-scrollbar {
-        scrollbar-width: none;
-    }
-
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
     }
 }
 

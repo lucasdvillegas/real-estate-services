@@ -44,7 +44,7 @@
         {{-- Card overlapping the hero --}}
         <div class="relative z-10 -mt-10 sm:-mt-14 lg:-mt-16">
             <div class="max-w-sm rounded-4xl border border-white/50 bg-white/80 p-5 shadow-xl shadow-ink/5 backdrop-blur-xl sm:p-6">
-                <p class="eyebrow">{{ config('site.metrics.years') }} años acompañando familias</p>
+                <p class="eyebrow">15 años acompañando familias</p>
 
                 <p class="mt-3 text-sm leading-relaxed text-ink-muted">
                     Casas, departamentos y PH en venta y alquiler, con asesoramiento
