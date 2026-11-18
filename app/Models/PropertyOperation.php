@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\PropertyOperationFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PropertyOperation extends Model
 {
-    /** @use HasFactory<\Database\Factories\PropertyOperationFactory> */
+    /** @use HasFactory<PropertyOperationFactory> */
     use HasFactory;
 
     protected $table = 'property_operations';
@@ -37,5 +38,13 @@ class PropertyOperation extends Model
     {
         return $this->belongsTo(PropertyStatus::class, 'status', 'code');
     }
-}
 
+    /**
+     * Same relation as status() but with a distinct name, so it can be
+     * eager loaded and read without colliding with the `status` column.
+     */
+    public function propertyStatus(): BelongsTo
+    {
+        return $this->belongsTo(PropertyStatus::class, 'status', 'code');
+    }
+}

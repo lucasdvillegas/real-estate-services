@@ -1,0 +1,105 @@
+@import 'tailwindcss' source(none);
+
+/*
+| Public website styles (Blade views). Kept separate from app.css so the
+| Inertia/Vue panel never loads public-site rules and vice versa.
+*/
+
+@source '../views/**/*.blade.php';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@theme {
+    --font-sans:
+        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    /* Warm neutral palette taken from the design reference. */
+    --color-surface: oklch(0.958 0.008 85);
+    --color-surface-alt: oklch(0.925 0.01 85);
+    --color-ink: oklch(0.185 0.005 80);
+    --color-ink-muted: oklch(0.52 0.008 80);
+    --color-line: oklch(0.87 0.008 85);
+
+    --radius-4xl: 2rem;
+    --radius-5xl: 2.75rem;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        @apply bg-surface text-ink font-sans antialiased;
+    }
+
+    ::selection {
+        @apply bg-ink text-surface;
+    }
+
+    /* Branded focus ring; currentColor keeps it visible on dark surfaces. */
+    :where(a, button, [tabindex]):focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 4px;
+    }
+
+    /* Images inside the rounded editorial blocks never overflow. */
+    img {
+        @apply max-w-full;
+    }
+}
+
+@layer components {
+    /* Container shared by every public section. */
+    .site-container {
+        @apply mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-10;
+    }
+
+    /* Small uppercase label used above headings. */
+    .eyebrow {
+        @apply text-ink-muted text-[11px] font-medium tracking-[0.22em] uppercase;
+    }
+
+    /* Black pill button. */
+    .btn {
+        @apply bg-ink text-surface hover:bg-ink/85 focus-visible:ring-ink/40 focus-visible:ring-offset-surface inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
+    }
+
+    .btn-light {
+        @apply bg-surface text-ink focus-visible:ring-surface/60 focus-visible:ring-offset-ink inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition duration-200 hover:bg-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
+    }
+
+    /* Outlined pill, used for tags. */
+    .pill {
+        @apply border-ink/15 text-ink inline-flex items-center rounded-full border px-3 py-1 text-xs;
+    }
+
+    .no-scrollbar {
+        scrollbar-width: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Mobile menu entrance. */
+@keyframes menu-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@utility animate-menu-fade {
+    animation: menu-fade 0.25s ease-out both;
+}
+
+/* Slow rotation for the circular hero badge. */
+@utility animate-slow-spin {
+    animation: spin 22s linear infinite;
+}

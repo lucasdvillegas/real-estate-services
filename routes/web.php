@@ -1,13 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PropertyTypeController;
-use App\Http\Controllers\PropertyFeatureController;
 use App\Http\Controllers\OperationTypeController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\PropertyFeatureController;
 use App\Http\Controllers\PropertyStatusController;
+use App\Http\Controllers\PropertyTypeController;
+use App\Http\Controllers\Site\HomeController;
+use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'Welcome')->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
