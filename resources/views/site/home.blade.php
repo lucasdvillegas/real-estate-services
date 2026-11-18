@@ -9,10 +9,10 @@
             <img
                 src="{{ config('site.images.hero') }}"
                 alt="Casa moderna con grandes ventanales y jardín"
-                class="h-[70vh] max-h-[760px] min-h-[520px] w-full object-cover"
+                class="h-[70vh] max-h-190 min-h-130 w-full object-cover"
             >
 
-            <div class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-ink/5"></div>
+            <div class="absolute inset-0 bg-linear-to-t from-ink/85 via-ink/25 to-ink/5"></div>
 
             <div class="absolute inset-x-0 bottom-0 p-6 pb-16 sm:p-10 sm:pb-20 lg:p-12 lg:pb-24">
                 <p class="eyebrow text-white/60">{{ config('site.tagline') }}</p>
@@ -68,11 +68,11 @@
                 <img
                     src="{{ config('site.images.intro_main') }}"
                     alt="Living luminoso con piso de madera"
-                    class="h-[420px] w-full object-cover lg:h-[540px]"
+                    class="h-105 w-full object-cover lg:h-135"
                     loading="lazy"
                 >
 
-                <div class="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent"></div>
+                <div class="absolute inset-0 bg-linear-to-t from-ink/50 to-transparent"></div>
 
                 <span class="pill absolute top-5 left-5 border-white/40 bg-white/85 backdrop-blur">
                     Interiores pensados
@@ -124,12 +124,25 @@
     {{-- Metrics --}}
     <section class="site-container mt-16 lg:mt-20">
         <dl class="grid grid-cols-2 gap-y-8 sm:grid-cols-4">
-            @foreach ($stats as $stat)
-                <div class="border-l border-line pl-5 sm:pl-6 {{ $loop->first ? 'border-l-0 pl-0 sm:pl-0' : '' }}">
-                    <dd class="text-4xl font-medium tracking-[-0.03em] lg:text-5xl">{{ $stat['value'] }}</dd>
-                    <dt class="mt-2 text-sm text-ink-muted">{{ $stat['label'] }}</dt>
-                </div>
-            @endforeach
+            <div>
+                <dd class="text-4xl font-medium tracking-[-0.03em] lg:text-5xl">3</dd>
+                <dt class="mt-2 text-sm text-ink-muted">Propiedades publicadas</dt>
+            </div>
+
+            <div class="border-l border-line pl-5 sm:pl-6">
+                <dd class="text-4xl font-medium tracking-[-0.03em] lg:text-5xl">6</dd>
+                <dt class="mt-2 text-sm text-ink-muted">Tipos de propiedad</dt>
+            </div>
+
+            <div class="border-l border-line pl-5 sm:pl-6">
+                <dd class="text-4xl font-medium tracking-[-0.03em] lg:text-5xl">15+</dd>
+                <dt class="mt-2 text-sm text-ink-muted">Años de experiencia</dt>
+            </div>
+
+            <div class="border-l border-line pl-5 sm:pl-6">
+                <dd class="text-4xl font-medium tracking-[-0.03em] lg:text-5xl">320+</dd>
+                <dt class="mt-2 text-sm text-ink-muted">Operaciones cerradas</dt>
+            </div>
         </dl>
     </section>
 
@@ -141,7 +154,7 @@
                     <img
                         src="{{ config('site.images.style_main') }}"
                         alt="Living amplio con escalera de madera y grandes ventanales"
-                        class="aspect-[4/5] w-full object-cover lg:aspect-[5/6]"
+                        class="aspect-4/5 w-full object-cover lg:aspect-5/6"
                         loading="lazy"
                     >
                 </div>
@@ -208,7 +221,7 @@
                 </p>
             </div>
         @else
-            <div class="mt-10 [&>*]:mb-5 sm:columns-2 lg:columns-3">
+            <div class="mt-10 *:mb-5 sm:columns-2 lg:columns-3">
                 @foreach ($properties as $property)
                     <x-site.property-card
                         :property="$property"
